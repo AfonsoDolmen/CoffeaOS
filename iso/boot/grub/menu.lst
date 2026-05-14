@@ -1,0 +1,5 @@
+timeout=0
+default=0
+
+title CoffeaOS
+kernel /boot/kernel.elf
