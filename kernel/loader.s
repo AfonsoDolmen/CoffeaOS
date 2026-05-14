@@ -22,7 +22,7 @@ align 4
 loader:			    ; Ponto de entrada (parte executável)
   mov eax, 0xCAFEBABE       ; Movendo valor aleatório para eax
 
-  ; Faz o registrador esp apontar para o final da pilha
+  ; Faz o registrador esp apontar para o topo da pilha
   mov esp, kernel_stack + KERNEL_STACK_SIZE
 
 .loop:
