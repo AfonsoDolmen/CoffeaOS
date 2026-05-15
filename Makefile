@@ -1,8 +1,8 @@
-OBJECTS = build/loader.o
+OBJECTS = build/loader.o build/kmain.o
 CC = gcc
 CFLAGS = -m32 -nostdlib -nostdinc -fno-builtin -fno-stack-protector \
          -nostartfiles -nodefaultlibs -Wall -Wextra -Werror -c
-LDFLAGS = -T kernel/link.ld -melf_i386
+LDFLAGS = -T arch/x86/link.ld -melf_i386
 AS = nasm
 ASFLAGS = -f elf
 ISO = build/coffeaos.iso
@@ -27,7 +27,7 @@ $(ISO): iso/boot/kernel.elf
 run: $(ISO)
 	qemu-system-i386 -cdrom $(ISO) -boot d
 
-build/%.o: kernel/%.s
+build/%.o: arch/x86/%.s
 	$(AS) $(ASFLAGS) $< -o $@
 
 build/%.o: kernel/%.c

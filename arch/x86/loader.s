@@ -1,5 +1,7 @@
 global loader 		    ; Entry point principal
 
+extern kmain		    ; Label para entry point kernel C
+
 ; Cabeçalho identificador para GRUB
 MAGIC_NUMBER equ 0x1BADB002 ; Constante do número mágico (GRUB)
 FLAGS equ 0x0		    ; Flags para multiboot
@@ -24,6 +26,8 @@ loader:			    ; Ponto de entrada (parte executável)
 
   ; Faz o registrador esp apontar para o topo da pilha
   mov esp, kernel_stack + KERNEL_STACK_SIZE
+
+  call kmain
 
 .loop:
   jmp .loop
