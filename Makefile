@@ -1,4 +1,4 @@
-OBJECTS = build/loader.o build/kmain.o
+OBJECTS = build/loader.o build/kmain.o build/io.o
 CC = gcc
 CFLAGS = -m32 -nostdlib -nostdinc -fno-builtin -fno-stack-protector \
          -nostartfiles -nodefaultlibs -Wall -Wextra -Werror -c
@@ -31,6 +31,12 @@ build/%.o: arch/x86/%.s
 	$(AS) $(ASFLAGS) $< -o $@
 
 build/%.o: kernel/%.c
+	$(CC) $(CFLAGS) $< -o $@
+
+build/%.o: include/%.c
+	$(CC) $(CFLAGS) $< -o $@
+
+build/%.o: drivers/%.c
 	$(CC) $(CFLAGS) $< -o $@
 
 clean:
