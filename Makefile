@@ -1,7 +1,7 @@
 OBJECTS = build/loader.o build/kmain.o build/io.o build/vga.o
 CC = gcc
 CFLAGS = -m32 -nostdlib -nostdinc -fno-builtin -fno-stack-protector \
-         -nostartfiles -nodefaultlibs -Wall -Wextra -Werror -c
+         -nostartfiles -nodefaultlibs -Wall -Wextra -Werror -c -Iinclude
 LDFLAGS = -T arch/x86/link.ld -melf_i386
 AS = nasm
 ASFLAGS = -f elf
@@ -31,9 +31,6 @@ build/%.o: arch/x86/%.s
 	$(AS) $(ASFLAGS) $< -o $@
 
 build/%.o: kernel/%.c
-	$(CC) $(CFLAGS) $< -o $@
-
-build/%.o: include/%.c
 	$(CC) $(CFLAGS) $< -o $@
 
 build/%.o: drivers/%.c
