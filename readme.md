@@ -12,7 +12,7 @@ Atualmente o projeto implementa um kernel mínimo compatível com Multiboot v1, 
 - Boot via GRUB Legacy
 - Inicialização da pilha em Assembly
 - Transferência de controle para código C via cdecl
-- Driver VGA simples
+- Driver serial (UART 16550) e VGA
 
 ---
 

@@ -1,5 +1,5 @@
 #include "../include/io.h"
-#include "../include/vga.h"
+#include "../include/drivers/vga.h"
 
 static cursor_state cursor;
 
@@ -52,13 +52,23 @@ void cursor_new_line()
   cursor_update((cursor.y + 1) * FB_COL_WIDTH);
 }
 
-void cursor_init()
+void clear(unsigned char fg, unsigned char bg)
 {
-  // Inicializa o cursor
-  cursor.x = 0;
-  cursor.y = 0;
-  cursor.linear_pos = 0;
-  cursor_set_hardware(0);
+  char* framebuffer = (char*)VGA_MEMORY_ADDRESS;
+
+  unsigned char color = ((bg << 4) & 0xF0) | (fg & 0xF0);
+
+  unsigned int screen_size = FB_COL_WIDTH * FB_COL_HEIGHT;
+
+  // Percorre a tela e limpa
+  for (unsigned int i = 0; i < screen_size; i++)
+  {
+    framebuffer[i * 2] = ' ';
+    framebuffer[i * 2 + 1] = color;
+  }
+
+  // Reseta cursor
+  cursor_update(0);
 }
 
 void print_char_cell(unsigned char character, unsigned char fg, unsigned char bg)
@@ -79,7 +89,17 @@ void print_char_cell(unsigned char character, unsigned char fg, unsigned char bg
   cursor_update(cursor.linear_pos + 1);
 }
 
-void kprint(char* buff)
+void cursor_init()
+{
+  // Inicializa o cursor
+  cursor.x = 0;
+  cursor.y = 0;
+  cursor.linear_pos = 0;
+  cursor_set_hardware(0);
+  clear(VGA_COLOR_BLACK, VGA_COLOR_BLACK);
+}
+
+void kprint(char* buff, unsigned char fg, unsigned char bg)
 {
   // Percorre a string
   while (*buff)
@@ -91,7 +111,7 @@ void kprint(char* buff)
         cursor_new_line();
         break;
       default:
-        print_char_cell(*buff, VGA_GREEN_COLOR, VGA_DARKGRAY_COLOR);
+        print_char_cell(*buff, fg, bg);
         break;
     }
     
