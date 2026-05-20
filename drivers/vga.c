@@ -87,6 +87,27 @@ void cursor_update(unsigned int new_pos)
   cursor_set_hardware(cursor.linear_pos);
 }
 
+void cursor_return()
+{
+  // Move o cursor para inicio da linha
+  cursor.x = 0;
+  cursor.linear_pos = (cursor.y * FB_COL_WIDTH) + cursor.x;
+
+  // Atualiza cursor
+  cursor_update(cursor.linear_pos);
+}
+
+void cursor_tab()
+{
+  // Calcula o próximo tab stop (multiplo de 4)
+  cursor.x += 4 - (cursor.x % 4);
+
+  cursor.linear_pos = (cursor.y * FB_COL_WIDTH) + cursor.x;
+
+  // Atualiza cursor
+  cursor_update(cursor.linear_pos);
+}
+
 void cursor_new_line()
 {
   // Incrementa a linha e atualiza a posição
@@ -147,9 +168,17 @@ void kprint(char* buff, unsigned char fg, unsigned char bg)
   {
     switch (*buff)
     {
+      // \t
+      case 0x09:
+        cursor_tab();
+        break;
       // \n
       case 0x0A:
         cursor_new_line();
+        break;
+      // \r
+      case 0x0D:
+        cursor_return();
         break;
       default:
         print_char_cell(*buff, fg, bg);
