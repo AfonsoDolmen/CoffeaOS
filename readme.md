@@ -34,7 +34,7 @@ O objetivo do CoffeaOS é estudar conceitos fundamentais de sistemas operacionai
 
 - [The Little OS Book](https://littleosbook.github.io)
 - [OSDev Wiki](https://wiki.osdev.org)
-
+- [Gitbook Assembly x86 - Mente Binária](https://mentebinaria.gitbook.io/assembly)
 ---
 
 ## 👨‍💻 Autor
