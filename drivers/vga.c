@@ -29,12 +29,6 @@ unsigned int get_cursor_pos()
   return pos; 
 }
 
-void get_cursor_xy(unsigned char* x, unsigned char* y)
-{
-  *x = cursor.x;
-  *y = cursor.y;
-}
-
 void cursor_update(unsigned int new_pos)
 {
   // Atualiza a posição do cursor virtual
