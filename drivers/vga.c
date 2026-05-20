@@ -1,5 +1,6 @@
 #include "../include/io.h"
 #include "../include/drivers/vga.h"
+#include "../kernel/klog.h"
 
 static cursor_state cursor;
 
@@ -30,7 +31,6 @@ unsigned int get_cursor_pos()
 
 void get_cursor_xy(unsigned char* x, unsigned char* y)
 {
-  // Transforma posição linear em xy
   *x = cursor.x;
   *y = cursor.y;
 }
@@ -71,10 +71,51 @@ void clear(unsigned char fg, unsigned char bg)
   cursor_update(0);
 }
 
+void scroll()
+{
+  char* framebuffer = (char*)VGA_MEMORY_ADDRESS;
+
+  // Verifica se o cursor está na ultima linha
+  if (cursor.y >= FB_COL_HEIGHT)
+  {
+    klog_ok("Scroll activated");
+    
+    // Move as linhas para cima
+    for (unsigned int y = 0; y < FB_COL_HEIGHT-1; y++)
+    {
+      for (unsigned int x = 0; x < FB_COL_WIDTH; x++)
+      {
+        // Calcula a posição linear do indice
+        framebuffer[(y * FB_COL_WIDTH) + x] = framebuffer[((y+1) * FB_COL_WIDTH) + x];
+      }
+    }
+
+    klog_ok("Linha copiada");
+
+    // Offset da ultima linha
+    unsigned int offset = (FB_COL_HEIGHT - 1) * FB_COL_WIDTH;
+
+    // Caractere padrão
+    unsigned int color = ((VGA_COLOR_WHITE << 4) & 0x0F) | (VGA_COLOR_WHITE & 0x0F); // Debug
+
+    // Limpa a última linha
+    for (unsigned int i = offset; i < (FB_COL_WIDTH * FB_COL_HEIGHT); i++)
+    {
+      framebuffer[i * 2] = ' ';
+      framebuffer[i * 2 + 1] = color;
+    }
+
+    // Atualiza posição do cursor
+    cursor_update(offset);
+  }
+}
+
 void print_char_cell(unsigned char character, unsigned char fg, unsigned char bg)
 {
   // Aponta para o endereço de vídeo VGA
   char* framebuffer = (char*)VGA_MEMORY_ADDRESS;
+
+  scroll();
 
   // Captura a posição do cursor
   unsigned int offset = cursor.linear_pos;
