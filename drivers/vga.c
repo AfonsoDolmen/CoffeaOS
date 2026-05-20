@@ -28,11 +28,50 @@ unsigned int get_cursor_pos()
   return pos; 
 }
 
-void get_cursor_xy(unsigned char* x, unsigned char* y)
+void scroll()
 {
-  // Transforma posição linear em xy
-  *x = cursor.x;
-  *y = cursor.y;
+  char* framebuffer = (char*)VGA_MEMORY_ADDRESS;
+
+  // Verifica se o cursor está na ultima linha
+  if (cursor.y >= FB_COL_HEIGHT)
+  {  
+    // Faz varredura na tela
+    for (unsigned int y = 0; y < FB_COL_HEIGHT-1; y++)
+    {
+      for (unsigned int x = 0; x < FB_COL_WIDTH; x++)
+      {
+        /*
+          Caputra o indice e acessa os bytes de caractere e cor
+          i = (y * width) + x
+        */
+        unsigned int current_line = (y * FB_COL_WIDTH) + x;
+        unsigned int next_line = ((y + 1) * FB_COL_WIDTH) + x;
+
+        framebuffer[current_line * 2] = framebuffer[next_line * 2];         // Caractere
+        framebuffer[current_line * 2 + 1] = framebuffer[next_line * 2 + 1]; // Cor
+      }
+    }
+
+    // Offset da ultima linha
+    unsigned int offset = FB_COL_WIDTH * (FB_COL_HEIGHT - 1);
+
+    // Caractere padrão
+    unsigned int color = ((VGA_COLOR_BLACK << 4) & 0x0F) | (VGA_COLOR_BLACK & 0x0F);
+
+    // Limpa a última linha
+    for (unsigned int i = 0; i < FB_COL_WIDTH; i++)
+    {
+      framebuffer[(i + offset) * 2] = ' ';
+      framebuffer[(i + offset) * 2 + 1] = color;
+    }
+
+    // Atualiza posição do cursor para o inicio da ultima linha
+    cursor.x = 0;
+    cursor.y = FB_COL_HEIGHT - 1;
+    cursor.linear_pos = (cursor.y * FB_COL_WIDTH) + cursor.x;
+
+    cursor_set_hardware(cursor.linear_pos);
+  }
 }
 
 void cursor_update(unsigned int new_pos)
@@ -42,8 +81,10 @@ void cursor_update(unsigned int new_pos)
   cursor.x = new_pos % FB_COL_WIDTH;
   cursor.y = new_pos / FB_COL_WIDTH;
 
+  scroll();
+
   // Atualiza a posição do cursor
-  cursor_set_hardware(new_pos);
+  cursor_set_hardware(cursor.linear_pos);
 }
 
 void cursor_new_line()

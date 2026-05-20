@@ -9,7 +9,7 @@ void kmain()
   serial_init(SERIAL_COM1_BASE);
 
   klog_ok("CoffeaKernel v0.1.0 Initializated!");
-  kprint("Welcome to CoffeaOS!", VGA_COLOR_GREEN, VGA_COLOR_BLACK);
-
+  kprint("Welcome to CoffeaOS!\n", VGA_COLOR_GREEN, VGA_COLOR_BLACK);
+    
   while(1) { } // Halt
 }
