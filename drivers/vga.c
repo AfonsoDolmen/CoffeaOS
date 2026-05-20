@@ -12,22 +12,6 @@ static void cursor_set_hardware(unsigned int pos)
   outb(VGA_CURSOR_DATA_PORT, pos & 0xFF);
 }
 
-unsigned int get_cursor_pos()
-{
-  // 16 bits (2 bytes)
-  unsigned int pos = 0;
-
-  // Captura o byte mais significativo da posição
-  outb(VGA_CURSOR_COMMAND_PORT, VGA_COMMAND_HIGH_BYTE);
-  pos |= (unsigned int)inb(VGA_CURSOR_DATA_PORT) << 8;
-
-  // Captura o byte menos significativo da posição
-  outb(VGA_CURSOR_COMMAND_PORT, VGA_COMMAND_LOW_BYTE);
-  pos |= (unsigned int)inb(VGA_CURSOR_DATA_PORT);
-
-  return pos; 
-}
-
 void scroll()
 {
   char* framebuffer = (char*)VGA_MEMORY_ADDRESS;
