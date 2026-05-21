@@ -25,6 +25,8 @@ typedef struct {
   unsigned char  base_high;   // Ultimos 8 bits da base
 }__attribute__((packed)) gdt_descriptor;
 
+extern void load_gdt(gdtr* gdtr_ptr);
+
 void gdt_init();
 void descriptor_define_bits(gdt_descriptor* gdt, unsigned int base, unsigned int limit, unsigned char access, unsigned char flags);
 
