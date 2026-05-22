@@ -6,25 +6,36 @@
 void kmain()
 {
   // Inicializa drivers
-  cursor_init();
+  vga_init();
   serial_init(SERIAL_COM1_BASE);
 
-  // Inicializa GDT
-  kprint("[INFO] ", VGA_COLOR_DARKGRAY, VGA_COLOR_BLACK);
-  kprint("Setting up GDT...\n", VGA_COLOR_WHITE, VGA_COLOR_BLACK);
+  vga_set_color(VGA_COLOR_DARKGRAY, VGA_COLOR_BLACK);
+  kprint("[INFO] ");
+
+  vga_set_color(VGA_COLOR_WHITE, VGA_COLOR_BLACK);
+  kprint("Setting up GDT...\n");
+
+  // Inicializa GDT  
   gdt_init();
+  
   klog_ok("GDT set up");
-  kprint("[OK] ", VGA_COLOR_GREEN, VGA_COLOR_BLACK);
-  kprint("GDT set up\n", VGA_COLOR_WHITE, VGA_COLOR_BLACK);
+
+  vga_set_color(VGA_COLOR_GREEN, VGA_COLOR_BLACK);
+  kprint("[OK] ");
+
+  vga_set_color(VGA_COLOR_WHITE, VGA_COLOR_BLACK);
+  kprint("GDT set up\n");
 
   klog_ok("CoffeaKernel v0.1.0 initializated!");
 
-  kprint("[OK] ", VGA_COLOR_GREEN, VGA_COLOR_BLACK);
-  kprint("CoffeaKernel v0.1.0 initializated!\n", VGA_COLOR_WHITE, VGA_COLOR_BLACK);
+  vga_set_color(VGA_COLOR_GREEN, VGA_COLOR_BLACK);
+  kprint("[OK] ");
+  vga_set_color(VGA_COLOR_WHITE, VGA_COLOR_BLACK);
+  kprint("CoffeaKernel v0.1.0 initializated!\n");
 
-  kprint("\n=====================================================\n", VGA_COLOR_WHITE, VGA_COLOR_BLACK);
-  kprint("\t\t\t\tWelcome to CoffeaOS!\n", VGA_COLOR_WHITE, VGA_COLOR_BLACK);
-  kprint("=====================================================\n", VGA_COLOR_WHITE, VGA_COLOR_BLACK);
+  kprint("\n=====================================================\n");
+  kprint("\t\t\t\tWelcome to CoffeaOS!\n");
+  kprint("=====================================================\n");
   
   while(1) { } // Halt
 }

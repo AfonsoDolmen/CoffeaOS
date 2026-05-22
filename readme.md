@@ -1,42 +1,42 @@
-# CoffeaOS ☕
+# CoffeaOS☕
+Sistema operacional de 32 bits para arquitetura x86 sendo desenvolvido do zero com fins de estudo e compreensão de desenvolvimento em baixo nível.
 
-CoffeaOS é um sistema operacional sendo desenvolvido em C e Assembly x86 com foco em aprendizado de baixo nível, arquitetura de computadores e desenvolvimento de kernels.
+## Sobre
+CoffeaOS é um projeto de hobby totalmente voltado a estudo e implementação de sistemas complexos em baixo nível.
 
-Atualmente o projeto implementa um kernel mínimo compatível com Multiboot v1, carregado pelo GRUB Legacy.
+A ideia surgiu da curiosidade em entender: comunicação software/hardware em baixo nível, programação em um ambiente com zero dependências externas, algoritmos triviais para gerenciamento de memória, processos, user mode e etc.
 
----
+## Screenshot
+![CoffeaOS booting](image.png)
 
-## 🚀 Funcionalidades atuais
+## Features
+- Modo protegido (32 bits)
+- Bootloader multiboot v1
+- Kernel em C e Assembly (NASM)
+- Drivers:
+    - VGA text mode para output
+    - UART 16550 para comunicação serial
 
-- Kernel compatível com Multiboot v1
-- Boot via GRUB Legacy
-- Inicialização da pilha em Assembly
-- Transferência de controle para código C via cdecl
-- Driver serial (UART 16550) e VGA
+## Como rodar?
+O desenvolvimento e testes estão sendo realizados em um ambiente Linux, para ser mais específico em uma distro Ubuntu.
 
----
+```bash
+# Dependências
+sudo apt install build-essential nasm genisoimage qemu-system-i386 make gcc
 
-## 🎯 Objetivos do projeto
+# Build
+make
 
-O objetivo do CoffeaOS é estudar conceitos fundamentais de sistemas operacionais, incluindo:
+# Executa OS
+make run
+```
 
-- Boot process
-- Assembly x86
-- Desenvolvimento de kernels
-- Gerenciamento de memória
-- Interrupções
-- Drivers
-- Comunicação direta com hardware
-
----
-
-## 📖 Referências
-
+## Referências
 - [The Little OS Book](https://littleosbook.github.io)
 - [OSDev Wiki](https://wiki.osdev.org)
 - [Gitbook Assembly x86 - Mente Binária](https://mentebinaria.gitbook.io/assembly)
----
+- [Manual Intel x86-64 e IA-32 (importante para segmentação GDT)](https://www.intel.com/content/www/us/en/developer/articles/technical/intel-sdm.html)
 
-## 👨‍💻 Autor
+## Autor
 
-Desenvolvido por Afonso Dolmen.
+Desenvolvido por Afonso Dolmen
