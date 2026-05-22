@@ -41,7 +41,8 @@ typedef struct {
   unsigned int linear_pos;
 } cursor_state;
 
-void cursor_init();
-void kprint(char* buff, unsigned char fg, unsigned char bg);
+void vga_init();
+void kprint(char* buff);
+void vga_set_color(unsigned char fg, unsigned char bg);
 
 #endif

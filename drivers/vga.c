@@ -1,7 +1,9 @@
 #include "../include/io.h"
 #include "../include/drivers/vga.h"
 
+// Variáveis globais
 static cursor_state cursor;
+static unsigned char color = ((VGA_COLOR_BLACK << 4) & 0xF0) | (VGA_COLOR_WHITE & 0x0F);
 
 static void cursor_set_hardware(unsigned int pos)
 {
@@ -102,7 +104,7 @@ void clear(unsigned char fg, unsigned char bg)
 {
   char* framebuffer = (char*)VGA_MEMORY_ADDRESS;
 
-  unsigned char color = ((bg << 4) & 0xF0) | (fg & 0xF0);
+  unsigned char clear_color = ((bg << 4) & 0xF0) | (fg & 0xF0);
 
   unsigned int screen_size = FB_COL_WIDTH * FB_COL_HEIGHT;
 
@@ -110,23 +112,20 @@ void clear(unsigned char fg, unsigned char bg)
   for (unsigned int i = 0; i < screen_size; i++)
   {
     framebuffer[i * 2] = ' ';
-    framebuffer[i * 2 + 1] = color;
+    framebuffer[i * 2 + 1] = clear_color;
   }
 
   // Reseta cursor
   cursor_update(0);
 }
 
-void print_char_cell(unsigned char character, unsigned char fg, unsigned char bg)
+void print_char_cell(unsigned char character)
 {
   // Aponta para o endereço de vídeo VGA
   char* framebuffer = (char*)VGA_MEMORY_ADDRESS;
 
   // Captura a posição do cursor
   unsigned int offset = cursor.linear_pos;
-
-  // Organiza byte
-  unsigned char color = ((bg << 4) & 0xF0) | (fg & 0x0F);
 
   framebuffer[offset * 2] = character; // Escreve caractere
   framebuffer[offset * 2 + 1] = color; // Definição de cor do caractere
@@ -135,17 +134,7 @@ void print_char_cell(unsigned char character, unsigned char fg, unsigned char bg
   cursor_update(cursor.linear_pos + 1);
 }
 
-void cursor_init()
-{
-  // Inicializa o cursor
-  cursor.x = 0;
-  cursor.y = 0;
-  cursor.linear_pos = 0;
-  cursor_set_hardware(0);
-  clear(VGA_COLOR_BLACK, VGA_COLOR_BLACK);
-}
-
-void kprint(char* buff, unsigned char fg, unsigned char bg)
+void kprint(char* buff)
 {
   // Percorre a string
   while (*buff)
@@ -165,10 +154,26 @@ void kprint(char* buff, unsigned char fg, unsigned char bg)
         cursor_return();
         break;
       default:
-        print_char_cell(*buff, fg, bg);
+        print_char_cell(*buff);
         break;
     }
     
     buff++;
   }
+}
+
+void vga_set_color(unsigned char fg, unsigned char bg)
+{
+  // Atualiza a cor
+  color = ((bg << 4) & 0xF0) | (fg & 0x0F);
+}
+
+void vga_init()
+{
+  // Inicializa o cursor
+  cursor.x = 0;
+  cursor.y = 0;
+  cursor.linear_pos = 0;
+  cursor_set_hardware(0);
+  clear(VGA_COLOR_BLACK, VGA_COLOR_BLACK);
 }
