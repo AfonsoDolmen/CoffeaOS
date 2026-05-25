@@ -1,6 +1,9 @@
 #ifndef GDT_H
 #define GDT_H
 
+// Descritores de segmentos para Kernel Mode e User Mode
+#define DESCRIPTOR_ARRAY_SIZE 5
+
 // Layout de memória que aponta para a GDT
 typedef struct {
   unsigned short limit; // Tamanho do array GDT em bytes (gdt_length - 1)

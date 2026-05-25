@@ -43,6 +43,7 @@ typedef struct {
 
 void vga_init();
 void kprint(char* buff);
+void clear();
 void vga_set_color(unsigned char fg, unsigned char bg);
 
 #endif

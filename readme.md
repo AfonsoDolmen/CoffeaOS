@@ -7,7 +7,9 @@ CoffeaOS é um projeto de hobby totalmente voltado a estudo e implementação de
 A ideia surgiu da curiosidade em entender: comunicação software/hardware em baixo nível, programação em um ambiente com zero dependências externas, algoritmos triviais para gerenciamento de memória, processos, user mode e etc.
 
 ## Screenshot
-![CoffeaOS booting VGA output](docs/image.png)
+![CoffeaOS booting VGA output](docs/coffeaos_boot.png)
+
+![CoffeaOS IDT testing](docs/coffeaos_idt_testing.png)
 
 ## Features
 - Modo protegido (32 bits)
