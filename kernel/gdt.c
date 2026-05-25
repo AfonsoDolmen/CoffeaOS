@@ -1,5 +1,7 @@
 #include "../include/kernel/gdt.h"
+#include "../include/drivers/vga.h"
 #include "klog.h"
+
 
 // Ponteiro para a GDT
 static gdtr gdt_ptr;
@@ -25,7 +27,12 @@ void descriptor_define_bits(gdt_descriptor* gdt, unsigned int base, unsigned int
 void gdt_init()
 {
   // Log
+  vga_set_color(VGA_COLOR_DARKGRAY, VGA_COLOR_BLACK);
   klog_info("Setting up GDT...");
+  kprint("[INFO] ");
+  vga_set_color(VGA_COLOR_WHITE, VGA_COLOR_BLACK);
+  kprint("Setting up GDT...\n");
+  
   
   // Aponta para a estrutra GDT
   gdt_ptr.limit = (sizeof(gdt_descriptor) * DESCRIPTOR_ARRAY_SIZE) - 1;
@@ -48,4 +55,12 @@ void gdt_init()
   klog_ok("GDT: User Code And User Data set up");
 
   load_gdt(&gdt_ptr);
+
+  klog_ok("GDT set up");
+
+  vga_set_color(VGA_COLOR_GREEN, VGA_COLOR_BLACK);
+  kprint("[OK] ");
+
+  vga_set_color(VGA_COLOR_WHITE, VGA_COLOR_BLACK);
+  kprint("GDT set up\n");
 }

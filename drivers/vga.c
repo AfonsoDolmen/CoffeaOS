@@ -100,11 +100,11 @@ void cursor_new_line()
   cursor_update((cursor.y + 1) * FB_COL_WIDTH);
 }
 
-void clear(unsigned char fg, unsigned char bg)
+void clear()
 {
   char* framebuffer = (char*)VGA_MEMORY_ADDRESS;
 
-  unsigned char clear_color = ((bg << 4) & 0xF0) | (fg & 0xF0);
+  unsigned char clear_color = color;
 
   unsigned int screen_size = FB_COL_WIDTH * FB_COL_HEIGHT;
 
@@ -175,5 +175,5 @@ void vga_init()
   cursor.y = 0;
   cursor.linear_pos = 0;
   cursor_set_hardware(0);
-  clear(VGA_COLOR_BLACK, VGA_COLOR_BLACK);
+  clear();
 }
