@@ -1,5 +1,6 @@
 #include "../include/io.h"
 #include "../include/drivers/vga.h"
+#include "../kernel/klog.h"
 
 // Variáveis globais
 static cursor_state cursor;
@@ -134,31 +135,160 @@ void print_char_cell(unsigned char character)
   cursor_update(cursor.linear_pos + 1);
 }
 
+void verify_special_char(unsigned char c)
+{
+  switch (c)
+  {
+    // \t
+    case 0x09:
+      cursor_tab();
+      break;
+      // \n
+    case 0x0A:
+      cursor_new_line();
+      break;
+    // \r
+    case 0x0D:
+      cursor_return();
+      break;
+      
+    default:
+      print_char_cell(c);
+      break;
+  }
+}
+
 void kprint(char* buff)
 {
   // Percorre a string
   while (*buff)
   {
-    switch (*buff)
+    verify_special_char(*buff);
+    buff++;
+  }
+}
+
+void format_print_string(char* str)
+{
+  int i = 0;
+
+  while (str[i] != '\0')
+  {
+    print_char_cell((unsigned char)str[i]);
+    i++;
+  }
+}
+
+void format_print_hex(unsigned int value)
+{
+  if (value == 0)
+  {
+    print_char_cell('0');
+    return;
+  }
+
+  // Mapeia base hexadecimal
+  char hex_digits[] = "0123456789ABCDEF";
+
+  // Buffer temporário para conversão
+  char buffer_value[9];
+  int i = 0;
+
+  while (value > 0)
+  {
+    int digit = value % 16;
+    buffer_value[i++] = hex_digits[digit];
+    value = value / 16;
+  }
+
+  while (i > 0)
+  {
+    print_char_cell(buffer_value[--i]);
+  }
+}
+
+void format_print_int(int value)
+{
+  if (value == 0)
+  {
+    print_char_cell('0');
+    return;
+  }
+
+  if (value < 0)
+  {
+    value = -value;
+    print_char_cell('-');
+  }
+
+  // Cria buffer temporário para conversão
+  char buffer_value[12];
+  int i = 0;
+
+  while (value > 0)
+  {
+    // Isola o ultimo digito do número (ex: "123" % 10 = '3')
+    int digit = value % 10;
+
+    // Converte para ASCII e armazena no buffer
+    buffer_value[i++] = digit + '0';
+
+    value = value / 10;
+  }
+
+  // Escreve o número de trás para frente
+  while (i > 0)
+  {
+    print_char_cell(buffer_value[--i]);
+  }
+}
+
+void kprintf(char* buff, void* arg)
+{
+  int i = 0;
+  
+  // Percorre a string
+  while (buff[i] != '\0')
+  {
+    if (buff[i] != '%')
     {
-      // \t
-      case 0x09:
-        cursor_tab();
+      // Escreve caractere
+      verify_special_char(buff[i]);
+      i++;
+      continue;
+    }
+
+    // Vai para o próximo caractere
+    i++;
+
+    switch (buff[i])
+    {
+      // Números
+      case 'd':
+        format_print_int((int)arg);
         break;
-      // \n
-      case 0x0A:
-        cursor_new_line();
+
+      case 'c':
+        print_char_cell((unsigned char)arg);
         break;
-      // \r
-      case 0x0D:
-        cursor_return();
+
+      case 's':
+        format_print_string((char*)arg);
         break;
+
+      case 'x':
+        // Prefixos hexadecimal
+        print_char_cell('0');
+        print_char_cell('x');
+        format_print_hex((unsigned int)arg);
+        break;
+
       default:
-        print_char_cell(*buff);
+        print_char_cell('%');
         break;
     }
-    
-    buff++;
+
+    i++;
   }
 }
 
