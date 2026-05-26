@@ -24,6 +24,8 @@ void kmain()
   kprint("\n=====================================================\n");
   kprint("\t\t\t\tWelcome to CoffeaOS!\n");
   kprint("=====================================================\n");
+
+  int result = 10 / 0;
   
   while(1) { } // Halt
 }
