@@ -1,5 +1,6 @@
 #include "../include/drivers/vga.h"
 #include "../include/drivers/serial.h"
+#include "../include/drivers/pic.h"
 #include "../include/kernel/gdt.h"
 #include "../include/kernel/idt.h"
 #include "./klog.h"
@@ -14,6 +15,12 @@ void kmain()
   gdt_init();
   idt_init();
 
+  // Inicia PIC
+  pic_init();
+
+  // Ativa as interrupções
+  asm volatile("sti");
+
   klog_ok("CoffeaKernel v0.1.0 initializated!");
 
   vga_set_color(VGA_COLOR_GREEN, VGA_COLOR_BLACK);
@@ -24,6 +31,6 @@ void kmain()
   kprint("\n=====================================================\n");
   kprint("\t\t\t\tWelcome to CoffeaOS!\n");
   kprint("=====================================================\n");
-  
+
   while(1) { } // Halt
 }

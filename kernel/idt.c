@@ -33,6 +33,9 @@ void idt_init()
   // Interrupções geradas pela CPU
   define_idt_entry(0, (unsigned int)interrupt_handler_0, 0x08, 0x8E);
 
+  // Interrupções de hardware
+  define_idt_entry(33, (unsigned int)irq_handler_33, 0x08, 0x8E);
+
   load_idt(&idt_ptr);
   
   klog_ok("IDT set up");

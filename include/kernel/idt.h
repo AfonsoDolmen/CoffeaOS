@@ -28,6 +28,8 @@ typedef struct {
 extern void load_idt(idtr* idt_base);
 extern void interrupt_handler_0();
 
+extern void irq_handler_33();
+
 // void define_idt_entry(unsigned char num, unsigned int base, unsigned short selector, unsigned char type_addr);
 void idt_init();
 
