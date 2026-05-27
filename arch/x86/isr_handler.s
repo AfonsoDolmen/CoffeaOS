@@ -15,6 +15,15 @@ interrupt_handler_%1:
   jmp common_interrupt_handler
 %endmacro
 
+%macro irq_handler 1
+global irq_handler_%1
+
+irq_handler_%1:
+  push dword 0
+  push dword %1
+  jmp common_interrupt_handler
+%endmacro
+
 extern isr_handler
 
 common_interrupt_handler:
@@ -28,3 +37,6 @@ common_interrupt_handler:
 
 ; Chama a macro
 no_error_code_interrupt_handler 0
+
+; IRQ teclado
+irq_handler 33

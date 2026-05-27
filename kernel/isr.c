@@ -1,5 +1,6 @@
 #include "../include/kernel/isr.h"
 #include "../include/drivers/vga.h"
+#include "../include/drivers/pic.h"
 #include "klog.h"
 
 void draw_blue_screen()
@@ -45,16 +46,30 @@ void raise_error_screen(char* msg, state_registers* state)
   // Informações da pilha
   kprintf("\n\nESP: %x,", state->esp);
   kprintf(" EBP: %x", state->ebp);
+
+  // Trava o processamento
+  asm volatile("hlt");
 }
 
 void isr_handler(state_registers* state)
 {
-  switch (state->int_no)
+  // Exceções geradas pela CPU
+  if (state->int_no < 32)
   {
-    case 0: raise_error_screen("Division by Zero!", state); break;
-    default: raise_error_screen("Unknow Exception!", state); break;
+    switch (state->int_no)
+    {
+      case 0: raise_error_screen("Division by Zero!", state); break; 
+      default: raise_error_screen("Unknow Exception!", state); break;
+    }
   }
 
-  // Trava o processamento
-  __asm__ volatile("hlt");
+  // Interrupções de hardware
+  if (state->int_no >= 32)
+  {
+    switch(state->int_no)
+    {
+      // TODO: Driver teclado
+      case 33: klog_info("Key pressed!"); pic_eoi(state->int_no - 32); break;
+    }
+  }
 }
