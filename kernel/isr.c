@@ -34,6 +34,12 @@ void raise_error_screen(char* msg, state_registers* state)
   // Número da exceção
   kprintf("\nException Number: %d", (signed int)state->int_no);
 
+  // Verifica se há error code
+  if (state->error_code != 0)
+  {
+    kprintf("\nError code: %x", state->error_code);
+  }
+
   // Escreve estado dos registradores
   kprintf("\n\nEAX: %x,", state->eax);
   kprintf(" EBX: %x,", state->ebx);

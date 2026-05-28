@@ -35,8 +35,16 @@ common_interrupt_handler:
   add esp, 8
   iret  ; Retorna da interrupção
 
-; Chama a macro
-no_error_code_interrupt_handler 0
+; Exceções da CPU 
+no_error_code_interrupt_handler 0 ; Divide by Zero
+no_error_code_interrupt_handler 6 ; Invalid Opcode
+no_error_code_interrupt_handler 7 ; Device not Available
+error_code_interrupt_handler 8    ; Double Fault
+error_code_interrupt_handler 10   ; Invalid TSS
+error_code_interrupt_handler 11   ; Segment not Present
+error_code_interrupt_handler 12   ; Stack-Segment Fault
+error_code_interrupt_handler 13   ; General Protection Fault
+error_code_interrupt_handler 14   ; Page Fault
 
 ; IRQ teclado
 irq_handler 33
