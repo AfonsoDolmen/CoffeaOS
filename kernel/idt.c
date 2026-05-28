@@ -31,7 +31,15 @@ void idt_init()
   idt_ptr.base = (unsigned int)&idt[0];
 
   // Interrupções geradas pela CPU
-  define_idt_entry(0, (unsigned int)interrupt_handler_0, 0x08, 0x8E);
+  define_idt_entry(0,  (unsigned int)interrupt_handler_0,  0x08, 0x8E);
+  define_idt_entry(6,  (unsigned int)interrupt_handler_6,  0x08, 0x8E);
+  define_idt_entry(7,  (unsigned int)interrupt_handler_7,  0x08, 0x8E);
+  define_idt_entry(8,  (unsigned int)interrupt_handler_8,  0x08, 0x8E);
+  define_idt_entry(10, (unsigned int)interrupt_handler_10, 0x08, 0x8E);
+  define_idt_entry(11, (unsigned int)interrupt_handler_11, 0x08, 0x8E);
+  define_idt_entry(12, (unsigned int)interrupt_handler_12, 0x08, 0x8E);
+  define_idt_entry(13, (unsigned int)interrupt_handler_13, 0x08, 0x8E);
+  define_idt_entry(14, (unsigned int)interrupt_handler_14, 0x08, 0x8E);
 
   // Interrupções de hardware
   define_idt_entry(33, (unsigned int)irq_handler_33, 0x08, 0x8E);

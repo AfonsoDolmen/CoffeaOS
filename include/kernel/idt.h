@@ -26,8 +26,19 @@ typedef struct {
 
 // Funções Assembly
 extern void load_idt(idtr* idt_base);
-extern void interrupt_handler_0();
 
+// Handler para exceções
+extern void interrupt_handler_0();
+extern void interrupt_handler_6();
+extern void interrupt_handler_7();
+extern void interrupt_handler_8();
+extern void interrupt_handler_10();
+extern void interrupt_handler_11();
+extern void interrupt_handler_12();
+extern void interrupt_handler_13();
+extern void interrupt_handler_14();
+
+// Handler para interrupções de hardware
 extern void irq_handler_33();
 
 // void define_idt_entry(unsigned char num, unsigned int base, unsigned short selector, unsigned char type_addr);
