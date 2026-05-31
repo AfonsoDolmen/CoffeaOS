@@ -64,7 +64,15 @@ void isr_handler(state_registers* state)
   {
     switch (state->int_no)
     {
-      case 0: raise_error_screen("Division by Zero!", state); break; 
+      case  0: raise_error_screen("Division by Zero!", state); break;
+      case  6: raise_error_screen("Invalid Opcode!", state); break;
+      case  7: raise_error_screen("Device not Available!", state); break;
+      case  8: raise_error_screen("Double Fault!", state); break;
+      case 10: raise_error_screen("Invalid TSS!", state); break;
+      case 11: raise_error_screen("Segment not Present!", state); break;
+      case 12: raise_error_screen("Stack-Segment Fault!", state); break;
+      case 13: raise_error_screen("General Protection Fault!", state); break;
+      case 14: raise_error_screen("Page Fault!", state); break;
       default: raise_error_screen("Unknow Exception!", state); break;
     }
   }
