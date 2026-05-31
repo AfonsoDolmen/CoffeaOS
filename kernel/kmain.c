@@ -1,6 +1,7 @@
 #include "../include/drivers/vga.h"
 #include "../include/drivers/serial.h"
 #include "../include/drivers/pic.h"
+#include "../include/drivers/keyboard.h"
 #include "../include/kernel/gdt.h"
 #include "../include/kernel/idt.h"
 #include "./klog.h"
@@ -17,6 +18,9 @@ void kmain()
 
   // Inicia PIC
   pic_init();
+
+  // Ativa teclado
+  keyboard_init();
 
   // Ativa as interrupções
   asm volatile("sti");
