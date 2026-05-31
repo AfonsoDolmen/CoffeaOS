@@ -46,5 +46,6 @@ void kprint(char* buff);
 void kprintf(char* buff, void* arg);
 void clear();
 void vga_set_color(unsigned char fg, unsigned char bg);
+void delete_char();
 
 #endif

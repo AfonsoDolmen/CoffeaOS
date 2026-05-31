@@ -103,6 +103,10 @@ void read_char()
   if (scan_code == RESEND_BYTE)
   	return;
 
+  // Backspace
+  if (scan_code == 0x0E)
+  	delete_char();
+
   // Caractere \n
   if (scan_code == 0x1C)
   	kprint("\n");
