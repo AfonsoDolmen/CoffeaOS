@@ -1,6 +1,7 @@
 #include "../include/kernel/isr.h"
 #include "../include/drivers/vga.h"
 #include "../include/drivers/pic.h"
+#include "../include/drivers/keyboard.h"
 #include "klog.h"
 
 void draw_blue_screen()
@@ -82,8 +83,8 @@ void isr_handler(state_registers* state)
   {
     switch(state->int_no)
     {
-      // TODO: Driver teclado
-      case 33: klog_info("Key pressed!"); pic_eoi(state->int_no - 32); break;
+      // Teclado
+      case 33: read_char(); pic_eoi(state->int_no - 32); break;
     }
   }
 }
