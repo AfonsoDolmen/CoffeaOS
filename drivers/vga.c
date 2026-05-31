@@ -158,6 +158,25 @@ void verify_special_char(unsigned char c)
   }
 }
 
+void delete_char() // Gambiarra temporária (prometo)
+{
+  // Move o cursor para trás
+  if (cursor.x != 0)
+  	cursor.x -= 1;
+
+  // Calcula posição linear
+  unsigned int new_pos  = (cursor.y * FB_COL_WIDTH) + cursor.x;
+  cursor_update(new_pos);
+
+  // Escreve um caractere vazio
+  print_char_cell(' ');
+
+  cursor.x -= 1;
+  new_pos = (cursor.y * FB_COL_WIDTH) + cursor.x;
+
+  cursor_update(new_pos);
+}
+
 void kprint(char* buff)
 {
   // Percorre a string
