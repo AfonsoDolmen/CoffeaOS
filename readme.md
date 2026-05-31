@@ -18,6 +18,8 @@ A ideia surgiu da curiosidade em entender: comunicação software/hardware em ba
 - Drivers:
     - VGA text mode para output
     - UART 16550 para comunicação serial
+    - PIC para comunicação PS/2
+    - Teclado PS/2 básico
 
 ## Como rodar?
 O desenvolvimento e testes estão sendo realizados em um ambiente Linux, para ser mais específico em uma distro Ubuntu.
