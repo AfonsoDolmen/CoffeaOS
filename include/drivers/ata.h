@@ -9,14 +9,24 @@
 #define PRIMARY_ATA_CTRL_REG_BASE   0x3F6
 #define SECONDARY_ATA_CTRL_REG_BASE 0x376
 
-#define ATA_SELECT_MASTER_COMMAND 0xA0
-#define ATA_SELECT_SLAVE_COMMAND  0xB0
+// Comando para seleção do drive e seu modo
+#define ATA_SELECT_CHS_MASTER_COMMAND 0xA0
+#define ATA_SELECT_CHS_SLAVE_COMMAND  0xB0
+
+#define ATA_SELECT_LBA_MASTER_COMMAND 0xE0
+#define ATA_SELECT_LBA_SLAVE_COMMAND  0xF0
 
 // Quantidade de barramentos
 #define BUS_NUM 2
 
 // Quantidade de dispositivos ATA
 #define ATA_DEVICE_NUM 4
+
+// Mascaras para registrador de status alternativo
+#define BIT_ERR  (1 << 0) // Indica erro
+#define BIT_DF   (1 << 5) // Drive Fault Error
+#define BIT_RDY  (1 << 6) // Indica se o drive está livre para enviar/receber dados
+#define BIT_BSY  (1 << 7) // Indica se o drive está ocupado
 
 // Offset de registradores para barramento
 typedef enum {
