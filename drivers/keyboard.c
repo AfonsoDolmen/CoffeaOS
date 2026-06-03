@@ -29,37 +29,11 @@ void keyboard_enable_scan()
   // Verifica se o comando foi enviado com sucesso
   if (ack != ACK_BYTE)
   {
-  	klog_error("Enable Keyboard Scan Error!\n");
+  	klog_error("Enable Keyboard Scan Error!");
   	return;
   }
 
-  klog_ok("Keyboard Scan Enabled\n");
-}
-
-void keyboard_set_scan_code()
-{
-  // Envia comando para setar o conjunto de scan codes
-  ps2_wait_write();
-  outb(PS2_DATA_PORT, SET_SCAN_CODE);
-
-  ps2_wait_read();
-  inb(PS2_DATA_PORT);
-
-  // Seleciona Scan Code 3
-  ps2_wait_write();
-  outb(PS2_DATA_PORT, SCAN_CODE_SET);
-
-  ps2_wait_read();
-  unsigned char ack = inb(PS2_DATA_PORT);
-
-  // Verifica se o comando foi enviado com sucesso
-  if (ack != ACK_BYTE)
-  {
-  	klog_error("Set Scan Code Error!\n");
-  	return;
-  }
-
-  klog_ok("Scan Code Set\n");
+  klog_ok("Keyboard Scan Enabled");
 }
 
 void init_mapping()
@@ -68,9 +42,7 @@ void init_mapping()
   for (int i = 0; i < SCAN_CODE_LENGTH; i++)
   {	    
     scan_char[i].scan_code  = scan_code[i];
-	scan_char[i].ascii_char = ascii_char[i];
-	//kprintf("Scan Code: %x, ", scan_char[i].scan_code);
-	//kprintf("ASCII Char: %c\n", scan_char[i].ascii_char);
+	  scan_char[i].ascii_char = ascii_char[i];
   }
 }
 
@@ -80,11 +52,11 @@ unsigned char get_scan_char(unsigned char scan_code)
   {
     // Compara scan code
   	if (scan_char[i].scan_code == scan_code)
-  	{
-  	  // Retorna caractere ASCII relacionado
   	  return scan_char[i].ascii_char;
-  	}
   }
+
+  // Caso a tecla não esteja mapeada, retorne 0
+  return 0x00;
 }
 
 void read_char()
@@ -95,21 +67,27 @@ void read_char()
 
   unsigned char ascii_char = get_scan_char(scan_code);
 
+  // Ignora o resend byte (não é uma boa prática, mas funciona)
+  if (scan_code == RESEND_BYTE)
+    return;
+
   // Ignora release key
   if (scan_code & 0x80)
     return;
 
-  // Ignora o resend byte (não é uma boa prática, mas funciona)
-  if (scan_code == RESEND_BYTE)
-  	return;
-
   // Backspace
   if (scan_code == 0x0E)
+  {
   	delete_char();
+    return;
+  }
 
   // Caractere \n
   if (scan_code == 0x1C)
-  	kprint("\n");
+  {
+    kprint("\n");
+    return;
+  }
 
   // Filtro para caractere ASCII
   if (ascii_char == 0 || ascii_char > 127)
@@ -122,6 +100,5 @@ void read_char()
 void keyboard_init()
 {
   keyboard_enable_scan();
-  // keyboard_set_scan_code();
   init_mapping();
 }
