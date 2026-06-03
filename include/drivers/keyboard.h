@@ -17,6 +17,14 @@
 #define SCAN_CODE_LENGTH 38
 #define CHAR_NUM SCAN_CODE_LENGTH
 
+// Comando para setar leds
+#define SET_LED_COMMAND 0xED
+
+// Leds
+#define SCROLL_LOCK_LED 0x00
+#define NUM_LOCK_LED    0x01
+#define CAPS_LOCK_LED   0x02
+
 // Mapeia caracteres
 static unsigned char ascii_char[CHAR_NUM] = {
   '1', '2', '3', '4', '5', '6', '7', '8', '9', '0',
@@ -41,6 +49,13 @@ typedef struct {
 	unsigned char ascii_char;
 } char_dict;
 
+
+// Representa o estado atual do teclado
+typedef struct {
+  unsigned char scroll_lock;
+  unsigned char num_lock;
+  unsigned char caps_lock;
+} keyboard_state;
 
 void read_char();
 void keyboard_init();
