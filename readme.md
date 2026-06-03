@@ -16,7 +16,7 @@ A ideia surgiu da curiosidade em entender: comunicação software/hardware em ba
 - Drivers:
     - VGA text mode para output
     - UART 16550 para comunicação serial
-    - PIC para comunicação serial 
+    - PIC para interrupções 
     - Teclado PS/2 básico
 
 ## Como rodar?
