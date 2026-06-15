@@ -24,6 +24,7 @@
 
 // Mascaras para registrador de status alternativo
 #define BIT_ERR  (1 << 0) // Indica erro
+#define BIT_DRQ  (1 << 3) // Indica que há dados para serem lidos
 #define BIT_DF   (1 << 5) // Drive Fault Error
 #define BIT_RDY  (1 << 6) // Indica se o drive está livre para enviar/receber dados
 #define BIT_BSY  (1 << 7) // Indica se o drive está ocupado
@@ -56,7 +57,9 @@ typedef struct {
   unsigned char drive_select; // Bit de seleção de driver
   signed int total_sectors;   // Quantidade total de setores LBA
   signed char model[41];      // Modelo do disco rígido
-  bool is_exist;              // Indica se o driver está ativo
+  unsigned short is_exist;    // Indica se o driver está ativo
 } ata_device;
+
+void ata_init();
 
 #endif

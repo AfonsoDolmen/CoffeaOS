@@ -3,6 +3,7 @@
 
 extern void outb(unsigned short port, unsigned char data);
 extern unsigned char inb(unsigned short port);
+extern unsigned char inw(unsigned short port);
 
 void io_wait();
 
