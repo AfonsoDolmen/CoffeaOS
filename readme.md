@@ -7,7 +7,9 @@ CoffeaOS é um projeto de hobby totalmente voltado a estudo e implementação de
 A ideia surgiu da curiosidade em entender: comunicação software/hardware em baixo nível, programação em um ambiente com zero dependências externas, algoritmos triviais para gerenciamento de memória, processos, user mode e etc.
 
 ## Screenshot
-![CoffeaOS booting VGA output](docs/image.png)
+![CoffeaOS Booting](docs/coffeaos_boot.png)
+
+![CoffeaOS blue screen of death](docs/coffeaos_panic.png)
 
 ## Features
 - Modo protegido (32 bits)
@@ -18,6 +20,7 @@ A ideia surgiu da curiosidade em entender: comunicação software/hardware em ba
     - UART 16550 para comunicação serial
     - PIC para interrupções 
     - Teclado PS/2 básico
+    - Driver ATA PIO para comunicação com disco rigído (WIP)
 
 ## Como rodar?
 O desenvolvimento e testes estão sendo realizados em um ambiente Linux, para ser mais específico em uma distro Ubuntu.
@@ -36,6 +39,7 @@ make run
 ## Referências
 - [The Little OS Book](https://littleosbook.github.io)
 - [OSDev Wiki](https://wiki.osdev.org)
+- [ATA PIO OSDev](https://wiki.osdev.org/ATA_PIO_Mode)
 - [Gitbook Assembly x86 - Mente Binária](https://mentebinaria.gitbook.io/assembly)
 - [Manual Intel x86-64 e IA-32 (importante para segmentação GDT)](https://www.intel.com/content/www/us/en/developer/articles/technical/intel-sdm.html)
 
