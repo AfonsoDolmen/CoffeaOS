@@ -1,6 +1,8 @@
 #ifndef ATA_H
 #define ATA_H
 
+#include "../types.h"
+
 // Endereço base para registradores do barramento primário e secundário
 #define PRIMARY_ATA_REG_BASE   0x1F0
 #define SECONDARY_ATA_REG_BASE 0x170
@@ -13,11 +15,13 @@
 #define ATA_SELECT_CHS_MASTER_COMMAND 0xA0
 #define ATA_SELECT_CHS_SLAVE_COMMAND  0xB0
 
-#define ATA_SELECT_LBA_MASTER_COMMAND 0xE0
-#define ATA_SELECT_LBA_SLAVE_COMMAND  0xF0
+#define ATA_DRIVE_SELECT_LBA (1 << 6)
 
 // Quantidade de barramentos
 #define BUS_NUM 2
+
+// Quantidade de dispositivo por barramento (master/slave)
+#define DRIVES_PER_BUS 2
 
 // Quantidade de dispositivos ATA
 #define ATA_DEVICE_NUM 4
@@ -54,12 +58,13 @@ typedef enum {
 typedef struct {
   unsigned int base;          // Endereço base registradores de barramento
   unsigned int ctrl_base;     // Endereço base registrador de controle
-  unsigned char drive_select; // Bit de seleção de driver
+  unsigned char drive_select; // Bit de seleção de drive
   signed int total_sectors;   // Quantidade total de setores LBA
   signed char model[41];      // Modelo do disco rígido
   unsigned short is_exist;    // Indica se o driver está ativo
 } ata_device;
 
 void ata_init();
+void ata_lba28_read_sectors(uint32_t lba, uint8_t sector_count, uint16_t* buffer);
 
 #endif
