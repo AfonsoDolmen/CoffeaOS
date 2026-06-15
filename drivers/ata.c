@@ -99,7 +99,7 @@ uint8_t identify_device(unsigned char drive)
     {
       ata_device_output_header_error();
       ata_device_msg_color();
-      kprint("ATA Device critical error\n");
+      kprintf("ATA Device critical error! Status Register: %x\n", status);
 
       klog_error("ATA Device critical error");
       return 0;
