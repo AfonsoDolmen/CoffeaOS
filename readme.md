@@ -7,7 +7,7 @@ CoffeaOS é um projeto de hobby totalmente voltado a estudo e implementação de
 A ideia surgiu da curiosidade em entender: comunicação software/hardware em baixo nível, programação em um ambiente com zero dependências externas, algoritmos triviais para gerenciamento de memória, processos, user mode e etc.
 
 ## Screenshot
-![CoffeaOS Booting](docs/coffeaos_boot.png)
+![CoffeaOS booting](docs/coffeaos_boot.png)
 
 ![CoffeaOS blue screen of death](docs/coffeaos_panic.png)
 

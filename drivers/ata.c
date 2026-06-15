@@ -84,7 +84,7 @@ void get_device_model(uint16_t* buffer)
   {
     // Captura a word do modelo
     uint16_t model = buffer[i];
-  
+
     // Byte swapping
     disk.model[disk_index++] = (char)(model >> 8);
     disk.model[disk_index++] = (char)(model & 0xFF);
