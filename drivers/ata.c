@@ -37,6 +37,73 @@ void select_ata_device(unsigned char drive)
   outb((disk.base + ATA_DRIVE_REG), drive);
 }
 
+void ata_lba28_read_sectors(uint32_t lba, uint8_t sector_count, uint16_t* buffer)
+{
+  klog_info("Reading sector...");
+
+  // Seleciona o drive em modo LBA e envia os 4 bits mais alto do LBA
+  outb((disk.base + ATA_DRIVE_REG), disk.drive_select | ATA_DRIVE_SELECT_LBA | ((lba >> 24) & 0x0F));
+
+  // Envia a quantidade de setores a serem lidos
+  outb((disk.base + ATA_SECTOR_COUNT_REG), sector_count);
+
+  // Envia os bits LBA
+  outb((disk.base + ATA_LBA_LOW_REG), (uint8_t)lba);
+  outb((disk.base + ATA_LBA_MIDDLE_REG), (uint8_t)(lba >> 8));
+  outb((disk.base + ATA_LBA_HIGH_REG), (uint8_t)(lba >> 16));
+
+  // Envia o comando para ler os setores
+  outb((disk.base + ATA_COMMAND_REG), 0x20);
+
+  // Polling via registrador de status (futuramente irei implementar via IRQs)
+  uint8_t status = inb((disk.base + ATA_STATUS_REG));
+
+  // Espera o drive desocupar
+  while ((inb((disk.base + ATA_STATUS_REG)) & BIT_BSY));
+  status = inb((disk.base + ATA_STATUS_REG));
+
+  // Aguarda até o drive estiver pronto para leitura
+  while (!(status & BIT_DRQ))
+  {
+    status = inb((disk.base + ATA_STATUS_REG));
+
+    // Verifica se houve erro
+    if (status & BIT_ERR)
+    {
+      ata_device_output_header_error();
+      ata_device_msg_color();
+      kprintf("Critical failure during reading. Status: %x\n", status);
+
+      klog_error("Critical failure during reading");
+
+      return;
+    }
+
+    // Drive Fault Error
+    if (status & BIT_DF)
+    {
+      ata_device_output_header_error();
+      ata_device_msg_color();
+      kprintf("Drive Fault Error. Status: %x\n", status);
+
+      klog_error("Drive Fault Error");
+
+      return;
+    }
+  }
+
+  kprintf("Disk Read Status: %x\n", status);
+
+  // Lê os dados
+  for (int i = 0; i < 256; i++)
+  {
+    // Lê 1 word de cada vez
+    buffer[i] = inw((disk.base + ATA_DATA_REG));
+  }
+
+  klog_ok("Sector read successfully");
+}
+
 uint8_t identify_device(unsigned char drive)
 {
   ata_device_output_header();
