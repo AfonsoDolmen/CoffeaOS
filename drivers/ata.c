@@ -94,8 +94,6 @@ void ata_lba28_read_sectors(uint32_t lba, uint8_t sector_count, uint16_t* buffer
 
   kprintf("Disk Read Status: %x\n", status);
 
-  uint8_t* byte_buffer = (uint8_t*)buffer;
-
   // Lê os dados
   for (int i = 0; i < 256; i++)
   {
