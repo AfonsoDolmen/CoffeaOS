@@ -40,5 +40,11 @@ void kmain()
   kprint("\t\t\t\tWelcome to CoffeaOS!\n");
   kprint("=====================================================\n");
 
+  // Cria buffer para leitura de setor
+  uint16_t buffer[256];
+
+  // Lê setor 1
+  ata_lba28_read_sectors(1, 1, buffer);
+
   while(1) { } // Halt
 }
