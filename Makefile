@@ -25,7 +25,7 @@ $(ISO): iso/boot/kernel.elf
 	            iso
 
 run: $(ISO)
-	qemu-system-i386 -serial stdio -cdrom $(ISO) -boot d -hdd coffeahdd.img
+	qemu-system-i386 -serial stdio -cdrom $(ISO) -boot d -hda coffeahdd.img
 
 build/%.o: arch/x86/%.s
 	$(AS) $(ASFLAGS) $< -o $@
