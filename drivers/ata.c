@@ -131,51 +131,63 @@ uint8_t identify_device(unsigned char drive)
 
   ata_device_output_header();
   ata_device_msg_color();
-  kprint("Driver identified\n");
+  kprint("Drive identified\n");
   
-  klog_ok("ATA Driver identified");
+  klog_ok("ATA Drive identified");
   return 1;
 }
 
 void detect_ata_device()
 {
+  uint16_t ata_bus[BUS_NUM] = { PRIMARY_ATA_REG_BASE, SECONDARY_ATA_REG_BASE };
+  uint16_t ata_drives[DRIVES_PER_BUS] = { ATA_SELECT_CHS_MASTER_COMMAND, ATA_SELECT_CHS_SLAVE_COMMAND };
+  uint16_t ata_ctrl_reg[BUS_NUM] = { PRIMARY_ATA_CTRL_REG_BASE, SECONDARY_ATA_CTRL_REG_BASE };
+
   klog_info("Detecting ATA device...");
 
   ata_device_output_header();
   ata_device_msg_color();
   kprint("Detecting ATA device...\n");
 
-  // Lê o registrador de status alternativo
-  delay_400ns(PRIMARY_ATA_CTRL_REG_BASE);
-  uint8_t ata_primary_bus   = inb(PRIMARY_ATA_CTRL_REG_BASE);
-  delay_400ns(SECONDARY_ATA_CTRL_REG_BASE);
-  uint8_t ata_secondary_bus = inb(SECONDARY_ATA_CTRL_REG_BASE);
-
-  // Verifica se há um drive no barramento (barramento flutuante)
-  if (ata_primary_bus != 0x00)
+  // Percorre os barramentos
+  for (uint16_t i = 0; i < BUS_NUM; i++)
   {
-    disk.base      = PRIMARY_ATA_REG_BASE;
-    disk.ctrl_base = PRIMARY_ATA_CTRL_REG_BASE;
-    klog_ok("ATA device detected in primary bus");
+    disk.base = ata_bus[i];
+    disk.ctrl_base = ata_ctrl_reg[i];
 
-    ata_device_output_header();
-    ata_device_msg_color();
-    kprintf("ATA device detected in %x\n", disk.base);
+    // Percorre os drives
+    for (uint16_t j = 0; j < DRIVES_PER_BUS; j++)
+    {
+      // Seleciona o drive e lê seu status
+      select_ata_device(ata_drives[j]);
+      delay_400ns(disk.ctrl_base);
+      uint8_t status = inb(disk.ctrl_base);
 
-    return;
-  }
+      // Armazena último drive selecionado
+      disk.drive_select = ata_drives[j];
 
-  if (ata_secondary_bus != 0x00)
-  {
-    disk.base      = SECONDARY_ATA_REG_BASE;
-    disk.ctrl_base = SECONDARY_ATA_CTRL_REG_BASE;
-    klog_ok("ATA device detected in secondary bus");
+      // Verifica se há um drive no barramento (barramento flutuante)
+      if (status != 0x00 && status != 0xFF)
+      {
+        // Verifica o bit RDY que indica que o drive não está "dormindo"
+        if (status & BIT_RDY)
+        {
+          disk.base      = ata_bus[i];
+          disk.ctrl_base = ata_ctrl_reg[i];
+          klog_ok("ATA device detected");
 
-    ata_device_output_header();
-    ata_device_msg_color();
-    kprintf("ATA device detected in %x\n", disk.base);
-    
-    return;
+          ata_device_output_header();
+          ata_device_msg_color();
+          kprintf("ATA device detected in %x\n", disk.base);
+
+          return;
+        }
+
+        ata_device_output_header();
+        ata_device_msg_color();
+        kprintf("Device not found at %x\n", disk.base);
+      }
+    }
   }
 
   // Nenhum dispositivo ATA encontrado

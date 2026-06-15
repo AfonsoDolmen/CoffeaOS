@@ -19,6 +19,9 @@
 // Quantidade de barramentos
 #define BUS_NUM 2
 
+// Quantidade de dispositivo por barramento (master/slave)
+#define DRIVES_PER_BUS 2
+
 // Quantidade de dispositivos ATA
 #define ATA_DEVICE_NUM 4
 
