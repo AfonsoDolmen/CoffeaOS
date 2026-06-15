@@ -2,6 +2,7 @@
 #include "../include/drivers/serial.h"
 #include "../include/drivers/pic.h"
 #include "../include/drivers/keyboard.h"
+#include "../include/drivers/ata.h"
 #include "../include/kernel/gdt.h"
 #include "../include/kernel/idt.h"
 #include "./klog.h"
@@ -18,6 +19,9 @@ void kmain()
 
   // Inicia PIC
   pic_init();
+
+  // ATA driver
+  ata_init();
 
   // Ativa teclado
   keyboard_init();
