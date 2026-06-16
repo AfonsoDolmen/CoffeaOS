@@ -1,6 +1,8 @@
 #ifndef VGA_H
 #define VGA_H
 
+#include "../types.h"
+
 // Constante memória de vídeo
 #define VGA_MEMORY_ADDRESS 0x000B8000
 
@@ -36,16 +38,16 @@
 
 // Cursor virtual
 typedef struct {
-  unsigned char x;
-  unsigned char y;
-  unsigned int linear_pos;
+  uint8_t x;
+  uint8_t y;
+  uint32_t linear_pos;
 } cursor_state;
 
 void vga_init();
 void kprint(char* buff);
 void kprintf(char* buff, void* arg);
 void clear();
-void vga_set_color(unsigned char fg, unsigned char bg);
+void vga_set_color(uint8_t fg, uint8_t bg);
 void delete_char();
 
 #endif

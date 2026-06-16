@@ -56,12 +56,12 @@ typedef enum {
 
 // Dispositivo ATA
 typedef struct {
-  unsigned int base;          // Endereço base registradores de barramento
-  unsigned int ctrl_base;     // Endereço base registrador de controle
-  unsigned char drive_select; // Bit de seleção de drive
-  signed int total_sectors;   // Quantidade total de setores LBA
-  signed char model[41];      // Modelo do disco rígido
-  unsigned short is_exist;    // Indica se o driver está ativo
+  uint16_t base;          // Endereço base registradores de barramento
+  uint16_t ctrl_base;     // Endereço base registrador de controle
+  uint8_t drive_select;   // Bit de seleção de drive
+  uint32_t total_sectors; // Quantidade total de setores LBA
+  char model[41];         // Modelo do disco rígido
+  uint8_t is_exist;       // Indica se o driver está ativo
 } ata_device;
 
 void ata_init();

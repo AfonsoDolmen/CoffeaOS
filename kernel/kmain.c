@@ -5,6 +5,7 @@
 #include "../include/drivers/ata.h"
 #include "../include/kernel/gdt.h"
 #include "../include/kernel/idt.h"
+#include "../include/types.h"
 #include "./klog.h"
 
 void kmain()
@@ -26,9 +27,6 @@ void kmain()
   // Ativa teclado
   keyboard_init();
 
-  // Ativa as interrupções
-  asm volatile("sti");
-
   klog_ok("CoffeaKernel v0.1.0 initializated!");
 
   vga_set_color(VGA_COLOR_GREEN, VGA_COLOR_BLACK);
@@ -49,6 +47,9 @@ void kmain()
   // Cast
   char* disk_data = (char*)buffer;
   kprintf("%s\n", disk_data);
+
+  // Ativa as interrupções
+  asm volatile("sti");
 
   while(1) { } // Halt
 }
