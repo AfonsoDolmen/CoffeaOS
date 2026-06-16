@@ -14,7 +14,7 @@
 // Habilita o bit DLAB para configuração da taxa de bits
 #define SERIAL_LINE_ENABLE_DLAB 0x80
 
-void serial_write(char* buff, unsigned short com);
-void serial_init(unsigned short com);
+void serial_write(char* buff, uint16_t com);
+void serial_init(uint16_t com);
 
 #endif

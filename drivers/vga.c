@@ -1,12 +1,13 @@
+#include "../include/types.h"
 #include "../include/io.h"
 #include "../include/drivers/vga.h"
 #include "../kernel/klog.h"
 
 // Variáveis globais
 static cursor_state cursor;
-static unsigned char color = ((VGA_COLOR_BLACK << 4) & 0xF0) | (VGA_COLOR_WHITE & 0x0F);
+static uint8_t color = ((VGA_COLOR_BLACK << 4) & 0xF0) | (VGA_COLOR_WHITE & 0x0F);
 
-static void cursor_set_hardware(unsigned int pos)
+static void cursor_set_hardware(uint32_t pos)
 {
   outb(VGA_CURSOR_COMMAND_PORT, VGA_COMMAND_HIGH_BYTE);
   outb(VGA_CURSOR_DATA_PORT, (pos >> 8) & 0x0FF);
@@ -31,8 +32,8 @@ void scroll()
           Caputra o indice e acessa os bytes de caractere e cor
           i = (y * width) + x
         */
-        unsigned int current_line = (y * FB_COL_WIDTH) + x;
-        unsigned int next_line = ((y + 1) * FB_COL_WIDTH) + x;
+        uint32_t current_line = (y * FB_COL_WIDTH) + x;
+        uint32_t next_line = ((y + 1) * FB_COL_WIDTH) + x;
 
         framebuffer[current_line * 2] = framebuffer[next_line * 2];         // Caractere
         framebuffer[current_line * 2 + 1] = framebuffer[next_line * 2 + 1]; // Cor
@@ -40,13 +41,13 @@ void scroll()
     }
 
     // Offset da ultima linha
-    unsigned int offset = FB_COL_WIDTH * (FB_COL_HEIGHT - 1);
+    uint32_t offset = FB_COL_WIDTH * (FB_COL_HEIGHT - 1);
 
     // Caractere padrão
-    unsigned int color = ((VGA_COLOR_BLACK << 4) & 0x0F) | (VGA_COLOR_BLACK & 0x0F);
+    uint8_t color = ((VGA_COLOR_BLACK << 4) & 0x0F) | (VGA_COLOR_BLACK & 0x0F);
 
     // Limpa a última linha
-    for (unsigned int i = 0; i < FB_COL_WIDTH; i++)
+    for (uint32_t i = 0; i < FB_COL_WIDTH; i++)
     {
       framebuffer[(i + offset) * 2] = ' ';
       framebuffer[(i + offset) * 2 + 1] = color;
@@ -105,12 +106,12 @@ void clear()
 {
   char* framebuffer = (char*)VGA_MEMORY_ADDRESS;
 
-  unsigned char clear_color = color;
+  uint8_t clear_color = color;
 
-  unsigned int screen_size = FB_COL_WIDTH * FB_COL_HEIGHT;
+  uint32_t screen_size = FB_COL_WIDTH * FB_COL_HEIGHT;
 
   // Percorre a tela e limpa
-  for (unsigned int i = 0; i < screen_size; i++)
+  for (uint32_t i = 0; i < screen_size; i++)
   {
     framebuffer[i * 2] = ' ';
     framebuffer[i * 2 + 1] = clear_color;
@@ -311,7 +312,7 @@ void kprintf(char* buff, void* arg)
   }
 }
 
-void vga_set_color(unsigned char fg, unsigned char bg)
+void vga_set_color(uint8_t fg, uint8_t bg)
 {
   // Atualiza a cor
   color = ((bg << 4) & 0xF0) | (fg & 0x0F);

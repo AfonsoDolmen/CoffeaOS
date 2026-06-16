@@ -1,8 +1,9 @@
 #include "../include/drivers/pic.h"
 #include "../include/io.h"
+#include "../include/types.h"
 #include "../kernel/klog.h"
 
-void pic_eoi(unsigned char irq)
+void pic_eoi(uint8_t irq)
 {
   // Verifica de qual PIC o IRQ veio
   if (irq >= 8)
@@ -12,7 +13,7 @@ void pic_eoi(unsigned char irq)
   outb(PIC_MASTER_COMMAND_PORT, PIC_EOI);
 }
 
-void pic_remap(int offset1, int offset2)
+void pic_remap(uint32_t offset1, uint32_t offset2)
 {
   // Inicialização em cascata
   outb(PIC_MASTER_COMMAND_PORT, ICW1_INIT | ICW1_ICW4);

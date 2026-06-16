@@ -2,6 +2,7 @@
 #include "../include/drivers/vga.h"
 #include "../kernel/klog.h"
 #include "../include/io.h"
+#include "../include/types.h"
 
 static char_dict scan_char[SCAN_CODE_LENGTH];
 static keyboard_state state;
@@ -15,7 +16,7 @@ static void ps2_wait_write()
 static void ps2_wait_read()
 {
   // Espera buffer para leitura
-  while(!inb(PS2_STATUS_PORT) & 1);
+  while(!(inb(PS2_STATUS_PORT) & 0x01));
 }
 
 void keyboard_enable_scan()
@@ -25,7 +26,7 @@ void keyboard_enable_scan()
   outb(PS2_DATA_PORT, ENABLE_SCAN_CODE);
 
   ps2_wait_read();
-  unsigned char ack = inb(PS2_DATA_PORT);
+  uint8_t ack = inb(PS2_DATA_PORT);
 
   // Verifica se o comando foi enviado com sucesso
   if (ack != ACK_BYTE)
@@ -47,7 +48,7 @@ void init_mapping()
   }
 }
 
-unsigned char get_scan_char(unsigned char scan_code)
+char get_scan_char(uint8_t scan_code)
 {
   for (int i = 0; i < SCAN_CODE_LENGTH; i++)
   {
@@ -60,7 +61,7 @@ unsigned char get_scan_char(unsigned char scan_code)
   return 0x00;
 }
 
-void toggle_led(unsigned char led)
+void toggle_led(uint8_t led)
 {
   // Envia o comando para alterar estado do led
   ps2_wait_write();
@@ -68,7 +69,7 @@ void toggle_led(unsigned char led)
 
   // Lê ACK byte
   ps2_wait_read();
-  unsigned char led_response = inb(PS2_DATA_PORT);
+  uint8_t led_response = inb(PS2_DATA_PORT);
 
   if (led_response != ACK_BYTE)
   {
@@ -136,7 +137,7 @@ void toggle_scrolllock()
   }
 }
 
-void toggle_keys(unsigned char* scan_code)
+void toggle_keys(uint8_t* scan_code)
 {
   switch(*scan_code)
   {
@@ -153,9 +154,9 @@ void read_char()
 {
   // Lê o scan code enviado pelo teclado
   ps2_wait_read();
-  unsigned char scan_code = inb(PS2_DATA_PORT);
+  uint8_t scan_code = inb(PS2_DATA_PORT);
 
-  unsigned char ascii_char = get_scan_char(scan_code);
+  char ascii_char = get_scan_char(scan_code);
 
   // Ignora o resend byte (não é uma boa prática, mas funciona)
   if (scan_code == RESEND_BYTE)
