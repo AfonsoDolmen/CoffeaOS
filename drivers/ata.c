@@ -37,6 +37,42 @@ void select_ata_device(unsigned char drive)
   outb((disk.base + ATA_DRIVE_REG), drive);
 }
 
+void wait_bsy(uint8_t* status)
+{
+  while ((inb(disk.base + ATA_STATUS_REG) & BIT_BSY));
+  *status = inb(disk.base + ATA_STATUS_REG);
+}
+
+void wait_drq(uint8_t* status)
+{
+  while (!(*status & BIT_DRQ))
+  {
+    *status = inb(disk.base + ATA_STATUS_REG);
+
+    if (*status & BIT_ERR)
+    {
+      ata_device_output_header_error();
+      ata_device_msg_color();
+      kprintf("Critical failure during reading. Status: %x\n", *status);
+
+      klog_error("Critical failure during reading");
+
+      return;
+    }
+
+    if (*status & BIT_DF)
+    {
+      ata_device_output_header_error();
+      ata_device_msg_color();
+      kprintf("Drive Fault Error. Status: %x\n", *status);
+
+      klog_error("Drive Fault error");
+
+      return;
+    }
+  }
+}
+
 void ata_lba28_read_sectors(uint32_t lba, uint8_t sector_count, uint16_t* buffer)
 {
   klog_info("Reading sector...");
@@ -59,42 +95,13 @@ void ata_lba28_read_sectors(uint32_t lba, uint8_t sector_count, uint16_t* buffer
   uint8_t status = inb((disk.base + ATA_STATUS_REG));
 
   // Espera o drive desocupar
-  while ((inb((disk.base + ATA_STATUS_REG)) & BIT_BSY));
-  status = inb((disk.base + ATA_STATUS_REG));
+  wait_bsy(&status);
+  //status = inb((disk.base + ATA_STATUS_REG));
 
   // Aguarda até o drive estiver pronto para leitura
-  while (!(status & BIT_DRQ))
-  {
-    status = inb((disk.base + ATA_STATUS_REG));
-
-    // Verifica se houve erro
-    if (status & BIT_ERR)
-    {
-      ata_device_output_header_error();
-      ata_device_msg_color();
-      kprintf("Critical failure during reading. Status: %x\n", status);
-
-      klog_error("Critical failure during reading");
-
-      return;
-    }
-
-    // Drive Fault Error
-    if (status & BIT_DF)
-    {
-      ata_device_output_header_error();
-      ata_device_msg_color();
-      kprintf("Drive Fault Error. Status: %x\n", status);
-
-      klog_error("Drive Fault Error");
-
-      return;
-    }
-  }
+  wait_drq(&status);
 
   kprintf("Disk Read Status: %x\n", status);
-
-  uint8_t* byte_buffer = (uint8_t*)buffer;
 
   // Lê os dados
   for (int i = 0; i < 256; i++)
@@ -155,25 +162,10 @@ uint8_t identify_device(unsigned char drive)
   }
 
   // Verifica se o drive está ocupado
-  while(inb(disk.base + ATA_STATUS_REG) & BIT_BSY);
-  status = inb(disk.ctrl_base);
+  wait_bsy(&status);
 
-  // Verifica se há bytes estão prontos para serem lidos
-  while(!(inb(disk.ctrl_base) & BIT_DRQ))
-  {
-    status = inb(disk.ctrl_base);
-
-    // Verifica se houve erro
-    if (status & BIT_ERR)
-    {
-      ata_device_output_header_error();
-      ata_device_msg_color();
-      kprintf("ATA Device critical error! Status Register: %x\n", status);
-
-      klog_error("ATA Device critical error");
-      return 0;
-    }
-  }
+  // Verifica se há dados a serem lidos
+  wait_drq(&status);
 
   ata_device_output_header();
   ata_device_msg_color();

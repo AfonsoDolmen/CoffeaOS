@@ -46,5 +46,9 @@ void kmain()
   // Lê setor 1
   ata_lba28_read_sectors(1, 1, buffer);
 
+  // Cast
+  char* disk_data = (char*)buffer;
+  kprintf("%s\n", disk_data);
+
   while(1) { } // Halt
 }
