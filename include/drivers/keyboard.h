@@ -1,6 +1,8 @@
 #ifndef KEYBOARD_H
 #define KEYBOARD_H
 
+#include "../types.h"
+
 // Portas dispositivo PS/2
 #define PS2_STATUS_PORT 0x64
 #define PS2_DATA_PORT   0x60
@@ -26,7 +28,7 @@
 #define CAPS_LOCK_LED   0x02
 
 // Mapeia caracteres
-static unsigned char ascii_char[CHAR_NUM] = {
+static uint8_t ascii_char[CHAR_NUM] = {
   '1', '2', '3', '4', '5', '6', '7', '8', '9', '0',
 	'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p',
 	'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', 'ç',
@@ -35,7 +37,7 @@ static unsigned char ascii_char[CHAR_NUM] = {
 };
 
 // Mapeia scan codes
-static unsigned char scan_code[SCAN_CODE_LENGTH] = {
+static uint8_t scan_code[SCAN_CODE_LENGTH] = {
   0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B,
 	0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18, 0x19,
 	0x1E, 0x1F, 0x20, 0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27,
@@ -45,16 +47,16 @@ static unsigned char scan_code[SCAN_CODE_LENGTH] = {
 
 // Estrutura de dicionario (chave, valor)
 typedef struct {
-	unsigned char scan_code;
-	unsigned char ascii_char;
+	uint8_t scan_code;
+	uint8_t ascii_char;
 } char_dict;
 
 
 // Representa o estado atual do teclado
 typedef struct {
-  unsigned char scroll_lock;
-  unsigned char num_lock;
-  unsigned char caps_lock;
+  uint8_t scroll_lock;
+  uint8_t num_lock;
+  uint8_t caps_lock;
 } keyboard_state;
 
 void read_char();

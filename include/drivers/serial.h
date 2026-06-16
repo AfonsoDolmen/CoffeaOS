@@ -1,6 +1,8 @@
 #ifndef SERIAL_H
 #define SERIAL_H
 
+#include "../types.h"
+
 // Porta base COM1
 #define SERIAL_COM1_BASE 0x3F8
 
@@ -14,7 +16,7 @@
 // Habilita o bit DLAB para configuração da taxa de bits
 #define SERIAL_LINE_ENABLE_DLAB 0x80
 
-void serial_write(char* buff, unsigned short com);
-void serial_init(unsigned short com);
+void serial_write(char* buff, uint16_t com);
+void serial_init(uint16_t com);
 
 #endif
