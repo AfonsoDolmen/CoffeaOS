@@ -1,9 +1,11 @@
 #ifndef INCLUDE_IO_H
 #define INCLUDE_IO_H
 
-extern void outb(unsigned short port, unsigned char data);
-extern unsigned char inb(unsigned short port);
-extern unsigned short inw(unsigned short port);
+#include "./types.h"
+
+extern void outb(uint16_t port, uint8_t data);
+extern uint8_t inb(uint16_t port);
+extern uint16_t inw(uint16_t port);
 
 void io_wait();
 

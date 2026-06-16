@@ -1,6 +1,8 @@
 #ifndef PIC_H
 #define PIC_H
 
+#include "../types.h"
+
 // Mapeia portas PIC 8259
 #define PIC_MASTER_COMMAND_PORT 0x20
 #define PIC_MASTER_DATA_PORT    0x21
@@ -25,7 +27,7 @@
 
 #define CASCADE_IRQ 2 // IRQ para acesso ao segundo PIC
 
-void pic_eoi(unsigned char irq);
+void pic_eoi(uint8_t irq);
 void pic_init();
 
 #endif
