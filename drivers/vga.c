@@ -24,9 +24,9 @@ void scroll()
   if (cursor.y >= FB_COL_HEIGHT)
   {  
     // Faz varredura na tela
-    for (unsigned int y = 0; y < FB_COL_HEIGHT-1; y++)
+    for (uint32_t y = 0; y < FB_COL_HEIGHT-1; y++)
     {
-      for (unsigned int x = 0; x < FB_COL_WIDTH; x++)
+      for (uint32_t x = 0; x < FB_COL_WIDTH; x++)
       {
         /*
           Caputra o indice e acessa os bytes de caractere e cor
@@ -62,12 +62,12 @@ void scroll()
   }
 }
 
-void cursor_update(uint32_t new_pos)
+void cursor_update(uint16_t x, uint16_t y)
 {
   // Atualiza a posição do cursor virtual
-  cursor.linear_pos = new_pos;
-  cursor.x = new_pos % FB_COL_WIDTH;
-  cursor.y = new_pos / FB_COL_WIDTH;
+  cursor.x = x;
+  cursor.y = y;
+  cursor.linear_pos = (y * FB_COL_WIDTH) + x;
 
   scroll();
 
@@ -82,7 +82,7 @@ void cursor_return()
   cursor.linear_pos = (cursor.y * FB_COL_WIDTH) + cursor.x;
 
   // Atualiza cursor
-  cursor_update(cursor.linear_pos);
+  cursor_update(cursor.x, cursor.y);
 }
 
 void cursor_tab()
@@ -90,16 +90,14 @@ void cursor_tab()
   // Calcula o próximo tab stop (multiplo de 4)
   cursor.x += 4 - (cursor.x % 4);
 
-  cursor.linear_pos = (cursor.y * FB_COL_WIDTH) + cursor.x;
-
   // Atualiza cursor
-  cursor_update(cursor.linear_pos);
+  cursor_update(cursor.x, cursor.y);
 }
 
 void cursor_new_line()
 {
   // Incrementa a linha e atualiza a posição
-  cursor_update((cursor.y + 1) * FB_COL_WIDTH);
+  cursor_update(0, (cursor.y + 1));
 }
 
 void clear()
@@ -118,12 +116,14 @@ void clear()
   }
 
   // Reseta cursor
-  cursor_update(0);
+  cursor.x = 0;
+  cursor.y = 0;
+  cursor_update(cursor.x, cursor.y);
 }
 
 void print_char_cell(unsigned char character)
 {
-  // Aponta para o endereço de vídeo VGA
+  // Aponta para o endereço de vídeo VGAi
   char* framebuffer = (char*)VGA_MEMORY_ADDRESS;
 
   // Captura a posição do cursor
@@ -133,7 +133,7 @@ void print_char_cell(unsigned char character)
   framebuffer[offset * 2 + 1] = color; // Definição de cor do caractere
 
   // Atualiza a posição do cursor
-  cursor_update(cursor.linear_pos + 1);
+  cursor_update((cursor.x + 1), cursor.y);
 }
 
 void verify_special_char(unsigned char c)
@@ -165,17 +165,14 @@ void delete_char() // Gambiarra temporária (prometo)
   if (cursor.x != 0)
   	cursor.x -= 1;
 
-  // Calcula posição linear
-  uint32_t new_pos  = (cursor.y * FB_COL_WIDTH) + cursor.x;
-  cursor_update(new_pos);
+  cursor_update(cursor.x, cursor.y);
 
   // Escreve um caractere vazio
   print_char_cell(' ');
 
   cursor.x -= 1;
-  new_pos = (cursor.y * FB_COL_WIDTH) + cursor.x;
 
-  cursor_update(new_pos);
+  cursor_update(cursor.x, cursor.y);
 }
 
 void kprint(char* buff)
@@ -199,7 +196,7 @@ void format_print_string(char* str)
   }
 }
 
-void format_print_hex(unsigned int value)
+void format_print_hex(uint16_t value)
 {
   if (value == 0)
   {
@@ -300,7 +297,7 @@ void kprintf(char* buff, void* arg)
         // Prefixos hexadecimal
         print_char_cell('0');
         print_char_cell('x');
-        format_print_hex((unsigned int)arg);
+        format_print_hex((uint16_t)arg);
         break;
 
       default:
