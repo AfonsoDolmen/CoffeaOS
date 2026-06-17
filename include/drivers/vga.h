@@ -38,8 +38,8 @@
 
 // Cursor virtual
 typedef struct {
-  uint8_t x;
-  uint8_t y;
+  uint16_t x;
+  uint16_t y;
   uint32_t linear_pos;
 } cursor_state;
 
