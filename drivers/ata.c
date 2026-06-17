@@ -43,7 +43,7 @@ void wait_bsy(uint8_t* status)
   *status = inb(disk.base + ATA_STATUS_REG);
 }
 
-void wait_drq(uint8_t* status)
+uint8_t wait_drq(uint8_t* status)
 {
   while (!(*status & BIT_DRQ))
   {
@@ -57,7 +57,7 @@ void wait_drq(uint8_t* status)
 
       klog_error("Critical failure during reading");
 
-      return;
+      return 0;
     }
 
     if (*status & BIT_DF)
@@ -68,9 +68,11 @@ void wait_drq(uint8_t* status)
 
       klog_error("Drive Fault error");
 
-      return;
+      return 0;
     }
   }
+
+  return 1;
 }
 
 void ata_lba28_read_sectors(uint32_t lba, uint8_t sector_count, uint16_t* buffer)
@@ -99,7 +101,10 @@ void ata_lba28_read_sectors(uint32_t lba, uint8_t sector_count, uint16_t* buffer
   //status = inb((disk.base + ATA_STATUS_REG));
 
   // Aguarda até o drive estiver pronto para leitura
-  wait_drq(&status);
+  uint8_t err_flg = wait_drq(&status);
+
+  if (!err_flg)
+    return;
 
   kprintf("Disk Read Status: %x\n", status);
 
@@ -161,7 +166,10 @@ uint8_t identify_device(unsigned char drive)
   wait_bsy(&status);
 
   // Verifica se há dados a serem lidos
-  wait_drq(&status);
+  uint8_t err_flg = wait_drq(&status);
+
+  if (!err_flg)
+    return;
 
   ata_device_output_header();
   ata_device_msg_color();
