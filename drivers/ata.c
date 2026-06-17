@@ -75,6 +75,26 @@ uint8_t wait_drq(uint8_t* status)
   return 1;
 }
 
+void get_device_model(uint16_t* buffer)
+{
+  // Indice para model
+  int disk_index = 0;
+
+  for (int i = 27; i < 41; i++)
+  {
+    // Captura a word do modelo
+    uint16_t model = buffer[i];
+  
+    // Byte swapping
+    disk.model[disk_index++] = (char)(model >> 8);
+    disk.model[disk_index++] = (char)(model & 0xFF);
+  }
+
+  ata_device_output_header();
+  ata_device_msg_color();
+  kprintf("Model: %s\n", disk.model);
+}
+
 void ata_lba28_read_sectors(uint32_t lba, uint8_t sector_count, uint16_t* buffer)
 {
   klog_info("Reading sector...");
@@ -186,6 +206,9 @@ uint8_t identify_device(unsigned char drive)
 
   // Extrai a quantidade total de setores
   disk.total_sectors = ((uint32_t)buffer[61] << 16) | buffer[60];
+
+  // Extrai o modelo
+  get_device_model(buffer);
 
   // Disco rigído existe
   disk.is_exist = 1;
