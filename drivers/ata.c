@@ -103,12 +103,8 @@ void ata_lba28_read_sectors(uint32_t lba, uint8_t sector_count, uint16_t* buffer
 
   kprintf("Disk Read Status: %x\n", status);
 
-  // Lê os dados
-  for (int i = 0; i < 256; i++)
-  {
-    // Lê 1 word de cada vez
-    buffer[i] = inw((disk.base + ATA_DATA_REG));
-  }
+  // Lê os dados do setor
+  insw_buffer(disk.base + ATA_DATA_REG, sector_count * 256, buffer);
 
   klog_ok("Sector read successfully");
 }
