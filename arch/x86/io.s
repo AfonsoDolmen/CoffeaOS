@@ -2,6 +2,7 @@
 global outb
 global inb
 global inw
+global insw_buffer
 
 outb:
   ; Captura argumentos passado pela função C
@@ -26,4 +27,16 @@ inw: ; Lê 16 bits
   xor eax, eax
 
   in ax, dx
+  ret
+
+insw_buffer: ; Joga dados da porta contida em dx para um buffer
+  push edi ; Preserva o valor de EDI
+
+  mov dx,  [esp + 8]  ; Porta
+  mov cx,  [esp + 12]  ; Numeros de words a serem lido
+  mov edi, [esp + 16] ; Endereço buffer
+
+  rep insw
+
+  pop edi
   ret
