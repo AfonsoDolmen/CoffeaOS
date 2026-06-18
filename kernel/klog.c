@@ -24,7 +24,7 @@ void klog_ok(char* buff)
   klog(buff);
 }
 
-void klog_erro(char* buff)
+void klog_error(char* buff)
 {
   serial_write("[ERROR] ", SERIAL_COM1_BASE);
   klog(buff);
