@@ -95,9 +95,53 @@ void get_device_model(uint16_t* buffer)
   kprintf("Model: %s\n", disk.model);
 }
 
+void ata_lba28_write_sectors(uint32_t lba, uint8_t sector_count, uint16_t* buffer)
+{
+  klog_info("Writing sector...");
+
+  // Seleciona drive LBA
+  outb((disk.base + ATA_DRIVE_REG), disk.drive_select | ATA_DRIVE_SELECT_LBA | ((lba >> 24) & 0x0F));
+
+  // Quantidade de setores
+  outb((disk.base + ATA_SECTOR_COUNT_REG), sector_count);
+
+  // Envia LBA
+  outb((disk.base + ATA_LBA_LOW_REG), (uint8_t)lba);
+  outb((disk.base + ATA_LBA_MIDDLE_REG), (uint8_t)(lba >> 8));
+  outb((disk.base + ATA_LBA_HIGH_REG), (uint8_t)(lba >> 16));
+
+  // Envia comando de escrita
+  outb((disk.base + ATA_COMMAND_REG), 0x30);
+
+  // Polling
+  uint8_t status = inb((disk.base + ATA_STATUS_REG));
+
+  // Espera o drive desocupar
+  wait_bsy(&status);
+
+  // Espera limpeza de buffer
+  uint8_t err_flg = wait_drq(&status);
+
+  // Verifica erro
+  if (!err_flg)
+    return;
+
+  // Envia dados
+  outsw_buffer((disk.base + ATA_DATA_REG), sector_count * 256, buffer);
+
+  // Espera driver processar
+  wait_bsy(&status);
+
+  // Cache Flush
+  outb((disk.base + ATA_COMMAND_REG), 0xE7);
+  wait_bsy(&status);
+
+  klog_ok("Sectors written successfully");
+}
+
 void ata_lba28_read_sectors(uint32_t lba, uint8_t sector_count, uint16_t* buffer)
 {
-  klog_info("Reading sector...");
+  klog_info("Reading sectors...");
 
   // Seleciona o drive em modo LBA e envia os 4 bits mais alto do LBA
   outb((disk.base + ATA_DRIVE_REG), disk.drive_select | ATA_DRIVE_SELECT_LBA | ((lba >> 24) & 0x0F));
@@ -126,10 +170,15 @@ void ata_lba28_read_sectors(uint32_t lba, uint8_t sector_count, uint16_t* buffer
   if (!err_flg)
     return;
 
-  kprintf("Disk Read Status: %x\n", status);
-
   // Lê os dados do setor
   insw_buffer(disk.base + ATA_DATA_REG, sector_count * 256, buffer);
+
+  // Dá um atraso de 400ns
+  delay_400ns((disk.base + ATA_STATUS_REG));
+
+  // Aguarda o reset DRQ e BSY 
+  while (!((status & BIT_BSY) == 0 && (status & BIT_DRQ) == 0))
+    status = inb((disk.base + ATA_STATUS_REG));
 
   klog_ok("Sector read successfully");
 }
@@ -189,7 +238,7 @@ uint8_t identify_device(unsigned char drive)
   uint8_t err_flg = wait_drq(&status);
 
   if (!err_flg)
-    return;
+    return 0;
 
   ata_device_output_header();
   ata_device_msg_color();
