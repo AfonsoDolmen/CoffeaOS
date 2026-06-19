@@ -66,5 +66,6 @@ typedef struct {
 
 void ata_init();
 void ata_lba28_read_sectors(uint32_t lba, uint8_t sector_count, uint16_t* buffer);
+void ata_lba28_write_sectors(uint32_t lba, uint8_t sector_count, uint16_t* buffer);
 
 #endif

@@ -20,7 +20,7 @@ A ideia surgiu da curiosidade em entender: comunicação software/hardware em ba
     - UART 16550 para comunicação serial
     - PIC para interrupções 
     - Teclado PS/2 básico
-    - Driver ATA PIO para comunicação com disco rigído (WIP)
+    - Driver ATA PIO para leitura e escrita do disco rigído
 
 ## Como rodar?
 O desenvolvimento e testes estão sendo realizados em um ambiente Linux, para ser mais específico em uma distro Ubuntu.

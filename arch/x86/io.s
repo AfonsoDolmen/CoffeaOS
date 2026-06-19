@@ -3,6 +3,7 @@ global outb
 global inb
 global inw
 global insw_buffer
+global outsw_buffer
 
 outb:
   ; Captura argumentos passado pela função C
@@ -40,3 +41,21 @@ insw_buffer: ; Joga dados da porta contida em dx para um buffer
 
   pop edi
   ret
+
+outsw_buffer:
+  push esi ; Preserva esi
+
+  mov dx, [esp + 8]   ; Porta
+  mov cx, [esp + 12]  ; Numero de words
+  mov esi, [esp + 16] ; Endereço buffer
+
+  .loop:
+    lodsw      ; Envia dado para ax e incrementa esi
+    out dx, ax ; Envia dado para a porta
+
+    jmp $+2    ; Atraso
+
+    loop .loop
+
+    pop esi
+    ret
